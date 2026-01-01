@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class MainController extends Controller
 {
@@ -17,5 +18,41 @@ class MainController extends Controller
     public function showData()
     {
         return response()->json($this->app_data);
+    }
+
+    public function startGame(): View
+    {
+        return view('home');
+    }
+
+    public function prepareGame(Request $request)
+    {
+
+        // validate request
+        $request->validate(
+            [
+                'total_questions' => 'required|integer|min:3|max:30'
+            ],
+            [
+                'total_questions.required' => 'O número de questões é obrigatório.',
+                'total_questions.inteter' => 'O número de questões tem que ser um valor inteiro',
+                'total_questions.min' => 'No mínimo :min questões.',
+                'total_questions.max' => 'No máximo :max questões.'
+            ]
+
+        );
+        
+        // get total questions
+        $total_questions = intval($request->input('total_questions'));
+
+        //prepare all the quiz structure
+        $quiz = $this->prepareQuiz($total_questions);
+        dd($quiz);
+
+    }
+
+    private function prepareQuiz($total_questions)
+    {
+        // Implementation of prepareQuiz method
     }
 }
