@@ -99,16 +99,16 @@ class MainController extends Controller
 
     public function game(): View
     {
-        $quis = session('quiz');
+        $quiz = session('quiz');
         $total_questions = session('total_questions');
         $current_question = session('current_question') - 1;
 
         // prepare answers to show in view
-        $answers = $quis[$current_question]['wrong_answers'];
-        $answers[] = $quis[$current_question]['correct_answer'];
+        $answers = $quiz[$current_question]['wrong_answers'];
+        $answers[] = $quiz[$current_question]['correct_answer'];
         shuffle($answers);
         return view('game', [
-            'country' => $quis[$current_question]['country'],
+            'country' => $quiz[$current_question]['country'],
             'totalQuestions' => $total_questions,
             'currentQuestion' => $current_question,
             'answers' => $answers
@@ -130,7 +130,7 @@ class MainController extends Controller
         $current_answers = session('correct_answers');
         $wrong_answers = session('wrong_answers');
 
-        if($answer === $current_answer){
+        if ($answer === $current_answer) {
             $current_answers++;
             $quiz[$current_question]['correct'] = true;
         } else {
@@ -154,5 +154,25 @@ class MainController extends Controller
             'totalQuestions' => session('total_questions'),
         ];
         return view('answer_result')->with($data);
+    }
+
+    public function nextQuestion()
+    {
+        $current_question = session('current_question');
+        $total_questions = session('total_questions');
+        // check if the game is over
+
+        if ($current_question < $total_questions) {
+            $current_question++;
+            session()->put('current_question', $current_question);
+            return redirect()->route('game');
+        } else {
+            return redirect()->route('show_results');
+        }
+    }
+
+    public function showResults()
+    {
+
     }
 }
